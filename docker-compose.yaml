@@ -8,11 +8,6 @@ services:
      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
      - "/d/prometheus/data:/prometheus"
 
-  hashbrowns:
-    image: alexellis2/hash-browns
-    ports:
-      - 8080:8080
-
   blackbox-exporter:
     image: prom/blackbox-exporter:master
     ports:

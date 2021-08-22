@@ -2,7 +2,7 @@ version: "3"
 services:  
   prometheus:
     image: quay.io/prometheus/prometheus:latest
-    retart: always
+    restart: always
     ports:
      - 9095:9090
     volumes:
@@ -11,7 +11,7 @@ services:
 
   blackbox-exporter:
     image: prom/blackbox-exporter:master
-    retart: always
+    restart: always
     ports:
       - 9115:9115
     volumes:

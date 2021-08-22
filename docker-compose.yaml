@@ -1,0 +1,21 @@
+version: "3"  
+services:  
+  prometheus:
+    image: quay.io/prometheus/prometheus:latest
+    ports:
+     - 9090:9090
+    volumes:
+     - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+     - "./data:/prometheus"
+
+  hashbrowns:
+    image: alexellis2/hash-browns
+    ports:
+      - 8080:8080
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:master
+    ports:
+      - 9115:9115
+    volumes:
+      - "./blackbox/config/config.yml:/etc/blackbox_exporter/config.yml"

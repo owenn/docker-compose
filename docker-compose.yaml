@@ -16,3 +16,13 @@ services:
       - 9115:9115
     volumes:
       - "./blackbox/config/config.yml:/etc/blackbox_exporter/config.yml"
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: always
+    privileged: true
+    volumes:
+      - "/d/homeassistant/config:/config"
+    environment:
+       TZ: "NZST"
+    network_mode: host

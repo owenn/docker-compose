@@ -47,6 +47,7 @@ scrape_configs:
         - http://carrot.lan
         - http://192.168.1.1
         - http://registry.lan
+        - https://www.trademe.co.nz
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

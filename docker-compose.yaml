@@ -26,3 +26,58 @@ services:
     environment:
        TZ: "NZST"
     network_mode: host
+
+  apt-cacher-ng:
+    image: sameersbn/apt-cacher-ng
+    container_name: apt-cacher-ng
+    ports:
+      - "3142:3142"
+    volumes:
+      - apt-cacher-ng:/var/cache/apt-cacher-ng
+    restart: always
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "192.168.1.113:53:53/tcp"
+      - "192.168.1.113:53:53/udp"
+      - "192.168.1.113:67:67/udp"
+      - "192.168.1.113:8124:80/tcp"
+    environment:
+      TZ: 'NZST'
+      # WEBPASSWORD: 'set a secure password here or it will be random'
+    # Volumes store your data between container upgrades
+    volumes:
+      - '/d/pihole/etc:/etc/pihole/'
+      - '/d/pigole/dnsmasq.d/:/etc/dnsmasq.d/'
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+
+volumes:
+  apt-cacher-ng:
+
+  #https://hub.docker.com/_/eclipse-mosquitto
+  #  mosquitto:
+  #  image: eclipse-mosquitto:latest
+  #  restart: always
+  #  ports:
+  #    - 1883:1883
+  #    - 9001:9001
+  #  volumes:
+  #    - /d/mosquittto/data:/mosquitto/data
+  #    - /d/mosquittto/log:/mosquitto/log
+  #    - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+  #  environment:
+  #    TZ: "NZST"
+
+    #  hivemq:
+    #image: hivemq/hivemq4
+    #restart: always    
+    #ports:
+    #  - 1883:1883
+    #  - 8000:8000
+    #  - 1880:8080

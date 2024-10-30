@@ -17,33 +17,55 @@ services:
     volumes:
       - "./blackbox/config/config.yml:/etc/blackbox_exporter/config.yml"
 
+  monitor:
+    image: louislam/uptime-kuma:1
+    restart: always
+      #privileged: true
+      #volumes:
+      #- /run/dbus:/run/dbus:ro
+      #- "/d/homeassistant/config:/config"
+    environment:
+       TZ: "NZST"
+         #network_mode: host
+
+    volumes:
+      - "./monitor:/app/data"
+    #  apt-cacher-ng:
+    #image: sameersbn/apt-cacher-ng
+    #container_name: apt-cacher-ng
+    ports:
+      - "3001:3001"
+        #docker run -d --restart=always -p 3001:3001 -v uptime-kuma:/app/data --name uptime-kuma louislam/uptime-kuma:1
+
+
   homeassistant:
     image: ghcr.io/home-assistant/home-assistant:stable
     restart: always
     privileged: true
     volumes:
+      - /run/dbus:/run/dbus:ro
       - "/d/homeassistant/config:/config"
     environment:
        TZ: "NZST"
     network_mode: host
 
-  apt-cacher-ng:
-    image: sameersbn/apt-cacher-ng
-    container_name: apt-cacher-ng
-    ports:
-      - "3142:3142"
-    volumes:
-      - apt-cacher-ng:/var/cache/apt-cacher-ng
-    restart: always
+    #  apt-cacher-ng:
+    #image: sameersbn/apt-cacher-ng
+    #container_name: apt-cacher-ng
+    #ports:
+    #  - "3142:3142"
+    #volumes:
+    #  - apt-cacher-ng:/var/cache/apt-cacher-ng
+    #restart: always
 
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
     ports:
-      - "192.168.1.113:53:53/tcp"
-      - "192.168.1.113:53:53/udp"
-      - "192.168.1.113:67:67/udp"
-      - "192.168.1.113:8124:80/tcp"
+      - "192.168.8.73:53:53/tcp"
+      - "192.168.8.73:53:53/udp"
+      - "192.168.8.73:67:67/udp"
+      - "192.168.8.73:8124:80/tcp"
     environment:
       TZ: 'NZST'
       # WEBPASSWORD: 'set a secure password here or it will be random'
@@ -57,8 +79,24 @@ services:
       - NET_ADMIN
     restart: unless-stopped
 
-volumes:
-  apt-cacher-ng:
+    #volumes:
+    #apt-cacher-ng:
+    #
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - 9100
 
   #https://hub.docker.com/_/eclipse-mosquitto
   #  mosquitto:
